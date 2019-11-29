@@ -19,7 +19,7 @@ echo "</pre>";
 
       <div class="row">
 
-        <?php $ambil = $koneksi->query("SELECT * FROM kategori JOIN barang ON kategori.ID_KATEGORI = barang.ID_KATEGORI"); 
+        <?php $ambil = $koneksi->query("SELECT * FROM kategori JOIN barang ON kategori.ID_KATEGORI = barang.ID_KATEGORI WHERE barang.ID_KATEGORI LIKE '$_GET[ID_KATEGORI']'"); 
           while ($perbarang = $ambil->fetch_assoc() ){ ?>
 
 

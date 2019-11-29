@@ -3,7 +3,7 @@
 <html>
 <head>
 	<title>daftar</title>
-	<link rel="stylesheet" href="ADMIN2/assets/css/bootstrap.css">
+	<link rel="stylesheet" href="assets/css/bootstrap.css">
 </head>
 <body>
 
@@ -64,7 +64,7 @@
 							$password = $_POST[password];
 							$alamat = $_POST[alamat];
 							$telepon = $_POST[telepon];
-
+						}
 						?>
 					</div>
 				</div>

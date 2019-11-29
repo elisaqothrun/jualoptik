@@ -6,7 +6,7 @@ include 'koneksi.php';
 <html>
 <head>
 	<title>Kategori Barang</title>
-	<link rel="stylesheet" href="ADMIN2 /assets/css/bootstrap.css">
+	<link rel="stylesheet" href="assets/css/bootstrap.css">
 </head>
 <body>
 
@@ -39,7 +39,6 @@ include 'koneksi.php';
       </div>
     </div>
   </section>
-?>
 
 </body>
 </html>

@@ -7,7 +7,7 @@ $cat = $_GET['id'];
 <html>
 <head>
 	<title>Optik Surya</title>
-	<link rel="stylesheet" href="ADMIN2 /assets/css/bootstrap.css">
+	<link rel="stylesheet" href="assets/css/bootstrap.css">
 </head>
 <body>
 <?php include "menu.php"; ?>

@@ -15,7 +15,7 @@ echo "</pre>";
 <html>
 <head>
 	<title>Pencarian</title>
-	<link rel="stylesheet" href="ADMIN2/assets/css/bootstrap.css">
+	<link rel="stylesheet" href="assets/css/bootstrap.css">
 </head>
 
 <body>

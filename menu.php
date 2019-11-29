@@ -1,7 +1,7 @@
 
  <!-- Navbar -->
-          <link rel="stylesheet" href="../../assets/css/bootstrap.css">
-     <nav class="navbar navbar-light" style="background-color: #e67e22; ">
+          <link rel="stylesheet" href="assets/css/bootstrap.css">
+     <nav class="navbar navbar-expand-lg navbar-light bg-info fixed-top" id="mainNav">
     <div class="container">
 
       <ul class="nav navbar-nav">
