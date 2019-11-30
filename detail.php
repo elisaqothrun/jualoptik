@@ -1,64 +1,47 @@
-<?php session_start();
-include 'koneksi.php';
-
-
-$ID_BARANG = $_GET["id"];
-//$_SESSION["ID_BARANG"]= $ID_BARANG;
-$ambil=$koneksi->query("SELECT * FROM barang WHERE ID_BARANG='$ID_BARANG'");
-$detail= $ambil->fetch_assoc();
+<h2>Detail Pemesanan</h2>
+<?php 
+$ambil = $koneksi->query ("SELECT * FROM pemesanan JOIN pembeli ON pemesanan.NIK=pembeli.NIK WHERE pemesanan.ID_PEMESANAN='$_GET[id]'");
+$detail = $ambil->fetch_assoc();
 ?>
-<!DOCTYPE html>
-<html>
-<head>
-	<title>checkout</title>
-	<link rel="stylesheet" href="ADMIN2/assets/css/bootstrap.css ">
-</head>
-<body>
+<p>ID Pembelian :</p>
+<pre><?php print_r($detail['ID_PEMESANAN']); ?></pre>
+<?php echo "Nama pembeli:<br><strong>" . $detail ['NAMA_PEMBELI'] . "</strong>";?> <br>
+<p>
+	<?php echo "Nomor telepon:<br><strong>" . $detail ['NO_TELEPON'] . "</strong>"; ?> <br>
+	<?php echo "Status pembayaran:<br><strong>" . $detail ['STATUS_PEMBAYARAN']; "</strong>";?> 
+</p> 
 
-<?php include "menu.php"; ?>
-
-<!--Konten-->
-	<section class="kontent">
-		<div class="container">
-			<div class="row">
-				<div class="col-md-6">
-					<img src="foto_produk/<?php echo $detail["GAMBAR_BARANG"];?>" alt="" class="img-responsive">
-				</div>
-			<div class="col-md-6">
-				<h2><?php echo $detail ["NAMA_BARANG"] ?></h2>
-				<h4>Rp.<?php echo number_format($detail ["HARGA_BARANG"]) ?></h4>
-				<h2>Stok :<?php echo $detail ["STOK_BARANG"] ?></h2>
-				<form method="post">
-					<div class="form-group">
-						<div class="input-group">
-							<input type="number" min="1" class="form-control" name="jumlah"  max="<?php echo $detail['STOK_BARANG'];  ?>">
-					</div>
-					</div>
-				</div>
-				<div class="input-group-btn">
-					<button class="btn btn-warning" name="beli">Masukan Keranjang</button>
-				</div>
-				</form>
-				<?php 
-				//jika ada tombol beli
-				if (isset($_POST["beli"])){
-					//mendpatkan jumlah yang diinputkan dalam form
-					//$array = array[$ID_BARANG,$jumlah];
-					$jumlah=$_POST["jumlah"];
-					//masukan ke keranjang belanja
-					//$a = $_SESSION["keranjang"];
-					//$b = $_SESSION["ID_BARANG"];
-
-					//$array = array[$ID_BARANG,$jumlah];
-					$_SESSION["keranjang"][$ID_BARANG] = $jumlah;
-
-					echo "<script>alert('produk telah masuk ke keranjang');</script>";
-					echo "<script>location='keranjang.php';</script>";
-				}
-				?>
-				<h2>Deskripsi barang :<?php echo $detail ["DESKRIPSI_BARANG"] ?></h2>
-			</div>
-		</div>
-		</div>
-	</section>
-
+<p>
+	<?php echo "Tanggal pemesanan:<br><strong>" .$detail ['TGL_PEMESANAN'] . "</strong>"; ?> <br>
+	<?php echo "Total harga:<br><strong>" . $detail ['TOTAL_HARGA'] . "</strong>"; ?> 
+</p> 
+<table class= "table table-bordered">
+	<thead>
+		<tr>
+			<th>no</th>
+			<th>nama produk</th>
+			<!--<th>nama pembeli</th>-->
+			<th>harga</th>
+			<th>jumlah</th>
+			<th>subtotal</th>
+		</tr>
+	</thead>
+	<tbody>
+	<?php $nomor=1; ?>
+	<?php $ambil = $koneksi-> query ("SELECT * FROM detail_pemesanan JOIN barang ON detail_pemesanan.ID_BARANG = barang.ID_BARANG
+	 WHERE detail_pemesanan.ID_PEMESANAN= '$_GET[id]'"); ?>
+	<?php 
+	while ($pecah =$ambil-> fetch_assoc()){ ?>
+	<tr>
+		<td><?php echo $nomor;?></td>
+		<td><?php echo $pecah['NAMA_BARANG'];?></td>
+		<td><?php echo $pecah['HARGA_BARANG'];?></td>
+		<td><?php echo $pecah['STOK_BARANG'];?></td>
+		<td>
+		<?php echo $pecah['HARGA_BARANG'] * $pecah['STOK_BARANG'];?></td>
+		
+	</tr>
+	<?php $nomor++ ?>
+	<?php } ?>
+		
+	</tbody>
