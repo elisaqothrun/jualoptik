@@ -1,8 +1,12 @@
 <?php 
 session_start();
+<<<<<<< HEAD
 $koneksi = new mysqli("localhost", "root","alvadebian","jualoptik");     
 
 
+=======
+$koneksi = new mysqli("localhost", "root","","jualoptik");
+>>>>>>> 6964c6a69b110a9b3c0575ba58c7a0e603ed84b5
 
 if (!isset($_SESSION['admin']))
 {

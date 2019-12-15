@@ -1,6 +1,10 @@
 <?php
 session_start();
+<<<<<<< HEAD
 include 'koneksi.php';
+=======
+$koneksi = new mysqli("localhost", "root","","jualoptik");
+>>>>>>> 6964c6a69b110a9b3c0575ba58c7a0e603ed84b5
 ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -61,7 +65,11 @@ include 'koneksi.php';
                                      <?php
                                        if (isset ($_POST['login']))
                                         {
+<<<<<<< HEAD
                                    $ambil = $koneksi->query("SELECT * FROM admin WHERE USERNAME='$_POST[username]' AND PASSWORD='$_POST[password]'");
+=======
+                                   $ambil = $koneksi->query("SELECT * FROM admin WHERE username='$_POST[username]' AND password='$_POST[password]'");
+>>>>>>> 6964c6a69b110a9b3c0575ba58c7a0e603ed84b5
                                    $yangcocok = $ambil->num_rows;
                                    if($yangcocok==1)
                                   {
