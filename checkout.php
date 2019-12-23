@@ -1,7 +1,24 @@
 <?php
 session_start();
 include 'koneksi.php';
-//jk adasessiom pembeli (belum login), mk dilarikan ke login.php
+$carikode= mysqli_query($koneksi,"SELECT * FROM pemesanan") OR DIE (mysqli_error($koneksi));
+$datakode= mysqli_fetch_array($carikode);
+$hitung=mysqli_num_rows($carikode);
+//if($datakode){
+	//$nilaikode=substr($datakode[0], 1);
+	//$kode=(int)$nilaikode; 
+	$kode=$hitung+1;
+	$cekkode="TR" .str_pad($kode,3,"0",STR_PAD_LEFT);
+	$kodeupdate = mysqli_query($koneksi,"SELECT * FROM pemesanan WHERE ID_PEMESANAN = '$cekkode'");
+	$kodebaru = mysqli_fetch_array($kodeupdate);
+	$cek = mysqli_num_rows($kodeupdate);
+	if ($cek == 1){
+		$kode2 = $kode+1;
+		$hasilkode ="TR" .str_pad($kode2,3,"0",STR_PAD_LEFT);
+	}else{
+		$hasilkode=$cekkode;
+	}
+//jika ada session pembeli (belum login), maka dilarikan ke login.php
 if (!isset($_SESSION["pembeli"])) 
 {
 	echo "<script>alert('silahkan login');</script>";
@@ -34,11 +51,11 @@ if (!isset($_SESSION["pembeli"]))
 					</tr>
 				</thead>
 				<tbody>
-				<?php $nomor=1 ?>
+				<?php $nomor=1 ?>	
 				<?php $totalbelanja = 0; ?>
 
 				<?php  foreach ($_SESSION["keranjang"] as $ID_BARANG=>$jumlah):?>
-				<!--menampilkan produk yang di masukan ke keranjang berdasarkan id baranf -->
+				<!--menampilkan produk yang di masukan ke keranjang berdasarkan id barang -->
 				<?php
 				$ambil = $koneksi->query("SELECT * FROM barang WHERE ID_BARANG='$ID_BARANG'");
 				$pecah =$ambil->fetch_assoc();
@@ -51,9 +68,9 @@ if (!isset($_SESSION["pembeli"]))
 					<td><?php echo $jumlah ;?></td>
 					<td>Rp. <?php echo number_format($subtotal);?></td>
 				</tr>
-				<?php $nomor++ ?>
-				<?php $totalbelanja+=$subtotal; ?>
-				<?php endforeach ?>
+				<?php $nomor++;
+				 $totalbelanja+=$subtotal;
+				 endforeach ?>
 				</tbody>
 				<tfoot>
 					<tr>
@@ -62,7 +79,7 @@ if (!isset($_SESSION["pembeli"]))
 					</tr>
 				</tfoot>
 			</table>
-			<form method="post">
+			<form method="post" action="checkout.php">
 				<div class="row">	
 				<div class="col-md-2">
 				<div class="form-group">
@@ -89,34 +106,53 @@ if (!isset($_SESSION["pembeli"]))
 							 	echo number_format($perongkir['TARIF']);
 								?>
 							</option> 
+
 						<?php } ?>
 							
 						</select>
 				</div>
 			</div>
-			<button class="btn btn-primary" name="nota">Nota</button>
+			<div class="form-group">
+			<label>Alamat Pengiriman</label>
+			<textarea class="form-control" name="alamat_pengiriman" placeholder="masukan alamat lengkap pengiriman (termasuk kode pos)"></textarea>
+				
+			</div>
+			<button type="submit" class="btn btn-primary" name="nota">Nota</button>
 			</form>
 
 			<?php
+			 //echo $id_pemesanan_baru = $koneksi->insert_id;
 			if (isset($_POST["nota"]))
 			 {
+				
 				$nik = $_SESSION["pembeli"]["NIK"];
-				$id_admin= $_POST["ID_ADMIN"];
-				$id_pemesanan = $_POST["ID_PEMESANAN"];
 				$id_ongkir = $_POST["ID_ONGKIR"];
 				$tgl_pemesanan =date("Y-m-d");
-				$ambil = $koneksi->query("SELECT * FROM ongkir WHERE ID_ONGKIR='$ID_ONGKIR'");
+				$ambil = $koneksi->query("SELECT * FROM ongkir WHERE ID_ONGKIR='$id_ongkir'");
 				$arrayongkir = $ambil -> fetch_assoc();
-				$taris= $arrayongkir['TARIF'];
+				$TARIF= $arrayongkir['TARIF'];
 				$totalharga = $totalbelanja + $TARIF;
-				//1. menyimpan data ke tabel pembelian
-				$koneksi->query("INSERT INTO pemesanan (ID_PEMESANAN, ID_ADMIN, ID_ONGKIR, NIK, TGL_PEMESANAN, TOTAL_HARGA, JUMLAH_BARANG, BUKTI_PEMBAYARAN,STATUS_PEMBAYARAN,TGL_TRANSFER) VALUES ('$id_pemesanan', '$id_admin','$id_ongkir','$nik','$tgl_pemesanan','$totalharga', '$JUMLAH_BARANG','$BUKTI_PEMBAYARAN','$STATUS_PEMBAYARAN','$TGL_TRANSFER')");
-				//mendapat ID_PEMESANAN barusan terjadi
-				$id_pemesanan_baru = $koneksi->insert_id;
+
+				// 1. menyimpan data ke tabel pembelian
+				$koneksi->query("INSERT INTO pemesanan (ID_PEMESANAN, NIK, ID_ONGKIR, TGL_PEMESANAN, TOTAL_HARGA) VALUES ('$hasilkode', '$nik', '$id_ongkir','$tgl_pemesanan','$totalharga')");
+				// mendapat ID_PEMESANAN barusan terjadi
+				// $id_pemesanan_baru = $koneksi->insert_id;
 				foreach ($_SESSION["keranjang"] as $ID_BARANG => $jumlah) 
 				{
-					$koneksi->query("INSERT INTO pemesanan (ID_PEMESANAN, ID_ADMIN, ID_ONGKIR, NIK, TGL_PEMESANAN, TOTAL_HARGA, JUMLAH_BARANG, BUKTI_PEMBAYARAN,STATUS_PEMBAYARAN,TGL_TRANSFER) VALUES ('$id_pemesanan_baru', '$ID_ADMIN','$ID_ONGKIR','$NIK','$TGL_PEMESANAN','$TOTAL_HARGA', '$JUMLAH_BARANG','$BUKTI_PEMBAYARAN','$STATUS_PEMBAYARAN','$TGL_TRANSFER')");
+				// 	medapatkam data produk berdasarkan id barang
+					$ambil = $koneksi->query("SELECT * FROM barang WHERE ID_BARANG='$ID_BARANG'");
+					$perbarang= $ambil->fetch_assoc();
+					echo $nama = $perbarang['NAMA_BARANG'];
+				 	echo $harga = $perbarang['HARGA_BARANG'];
+				 	echo $subtotal = $perbarang['HARGA_BARANG']*$jumlah;
+
+				$koneksi->query("INSERT INTO detail_pemesanan (ID_BARANG, ID_PEMESANAN, JUMLAH_BARANG,NAMABARANG,HARGABARANG,TOTAL_HARGA) VALUES ('$ID_BARANG', '$hasilkode', '$jumlah','$nama','$harga','$subtotal')");
 				}
+				//mengkosongkan keranjang belanja
+				unset($_SESSION["keranjang"]);
+				//tampilan dialihkan kehalaman nota
+				echo "<script>alert('Pembelian sukses');</script>";
+				echo "<script>location='nota.php?idn=$hasilkode';</script>";
 			}
 			?>
 			</div>

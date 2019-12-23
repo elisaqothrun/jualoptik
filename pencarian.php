@@ -2,14 +2,15 @@
 <?php
 $keyword = $_GET["keyword"];
 $semuadata = array();
-$ambil= $koneksi->query("SELECT * FROM barang WHERE NAMA_BARANG LIKE '%keyword%' OR DESKRIPSI_BARANNG LIKE '%keyword%'");
-while($pecah = $ambil->fetch_assoc()) 
+$ambil= mysqli_query ($koneksi, "SELECT * FROM barang WHERE NAMA_BARANG LIKE '%$keyword%' OR DESKRIPSI_BARANG LIKE '%$keyword%'");
+//while($pecah = $ambil->fetch_assoc()) 
+	while($pecah = mysqli_fetch_assoc($ambil)) 
 {
 $semuadata[]= $pecah;
 }
-echo "<pre";
-print_r($semuadata);
-echo "</pre>";
+// echo "<pre>";
+// print_r($semuadata);
+// echo "</pre>";
 ?>
  <!DOCTYPE html>
 <html>
@@ -23,11 +24,15 @@ echo "</pre>";
 <div class="container">
 	<h3>Hasil Pencarian</h3>
 	<?php if (empty($semuadata)): ?>
-		<div class="alert alert-danger"> Barang <?php echo $keyword ?></div>
+		<div class="alert alert-danger"> Produk <?php echo $keyword ?> Tidak Ditemukan</div>
 	<?php endif ?>
 	
 	<div class="row">
-	<?php foreach ($semuadata as $key => $value): ?>
+	<?php foreach ($semuadata as $key => $value): 
+		//while ($value=mysqli_fetch_array($ambil)) {
+			# code...
+		
+	?>
 
 				<div class="col-md-3">
 					<div class="thumbnail">
@@ -42,7 +47,7 @@ echo "</pre>";
 						</div>
 					</div>
 				</div>
-	<?php endforeach ?>
+	<?php  endforeach ?>
 	</div>
 </div>
 
